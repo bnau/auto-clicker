@@ -1,20 +1,28 @@
-use winit::{
-    event::{Event, WindowEvent},
-    event_loop::{ControlFlow, EventLoop},
-    window::WindowBuilder,
-};
+extern crate gtk;
+extern crate gio;
+
+use gtk::prelude::*;
+use gio::prelude::*;
+
+use gtk::{Application, ApplicationWindow, Button};
 
 fn main() {
-    let event_loop = EventLoop::new();
-    let window = WindowBuilder::new().build(&event_loop).unwrap();
+    let application = Application::new(Option::from("com.github.gtk-rs.examples.basic"), Default::default())
+        .expect("failed to initialize GTK application");
 
-    event_loop.run(move |event, _, control_flow| {
-        match event {
-            Event::WindowEvent {
-                event: WindowEvent::CloseRequested,
-                window_id,
-            } if window_id == window.id() => *control_flow = ControlFlow::Exit,
-            _ => *control_flow = ControlFlow::Wait,
-        }
+    application.connect_activate(|app| {
+        let window = ApplicationWindow::new(app);
+        window.set_title("First GTK+ Program");
+        window.set_default_size(350, 70);
+
+        let button = Button::new_with_label("Click me!");
+        button.connect_clicked(|_| {
+            println!("Clicked!");
+        });
+        window.add(&button);
+
+        window.show_all();
     });
+
+    application.run(&[]);
 }
