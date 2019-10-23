@@ -4,13 +4,9 @@ extern crate gtk;
 use gio::prelude::*;
 use gtk::prelude::*;
 
-use gtk::{Application, ApplicationWindow, Builder, Button, Grid, LayoutBuilder};
+use gtk::{ApplicationWindow, Builder, Button, Grid};
 
 use std::env::args;
-
-use std::cell::RefCell;
-use std::collections::HashMap;
-use std::rc::Rc;
 
 // upgrade weak reference or return
 #[macro_export]
@@ -33,23 +29,16 @@ fn build_ui(application: &gtk::Application) {
     let window: ApplicationWindow = builder.get_object("window").expect("Couldn't get window");
     window.set_application(Some(application));
     let grid: Grid = builder.get_object("grid").expect("Couldn't get grid");
-    let button6: Button = builder.get_object("button6").expect("Couldn't get button6");
+    let button3: Button = builder.get_object("button3").expect("Couldn't get button3");
     let weak_grid = grid.downgrade();
-    button6.connect_clicked(move |button| {
+    button3.connect_clicked(move |button| {
         let grid = upgrade_weak!(weak_grid);
         let height = grid.get_cell_height(button);
         let new_height = if height == 2 { 1 } else { 2 };
         grid.set_cell_height(button, new_height);
     });
-    let button7: Button = builder.get_object("button7").expect("Couldn't get button7");
-    let weak_grid = grid.downgrade();
-    button7.connect_clicked(move |button| {
-        let grid = upgrade_weak!(weak_grid);
-        let left_attach = grid.get_cell_left_attach(button);
-        let new_left_attach = if left_attach == 2 { 0 } else { left_attach + 1 };
-        grid.set_cell_left_attach(button, new_left_attach);
-    });
-    button7.connect_enter_notify_event(|button, _| {
+    let button4: Button = builder.get_object("button4").expect("Couldn't get button4");
+    button4.connect_enter_notify_event(|button, _| {
         button.set_label("test");
         Inhibit(false)
     });
