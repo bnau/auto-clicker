@@ -6,7 +6,15 @@ use gtk::prelude::*;
 
 use gtk::{ApplicationWindow, Builder, Button, Grid};
 
+use std::cell::RefCell;
 use std::env::args;
+use std::sync::Arc;
+
+mod app_state;
+use app_state::{AppState, State};
+
+mod gui;
+use gui::Gui;
 
 // upgrade weak reference or return
 #[macro_export]
@@ -23,37 +31,48 @@ macro_rules! upgrade_weak {
 }
 
 fn build_ui(application: &gtk::Application) {
+    let gui = Arc::new(Gui::new());
+    let state = Arc::new(RefCell::new(State::new()));
     let glade_src = include_str!("gui.xml");
     let builder = Builder::new_from_string(glade_src);
 
     let window: ApplicationWindow = builder.get_object("window").expect("Couldn't get window");
     window.set_application(Some(application));
-    let grid: Grid = builder.get_object("grid").expect("Couldn't get grid");
-    let button3: Button = builder.get_object("button3").expect("Couldn't get button3");
-    let weak_grid = grid.downgrade();
-    button3.connect_clicked(move |button| {
-        let grid = upgrade_weak!(weak_grid);
-        let height = grid.get_cell_height(button);
-        let new_height = if height == 2 { 1 } else { 2 };
-        grid.set_cell_height(button, new_height);
-    });
-    let button4: Button = builder.get_object("button4").expect("Couldn't get button4");
-    button4.connect_enter_notify_event(|button, _| {
-        button.set_label("test");
-        Inhibit(false)
-    });
+    let button_click: Button = builder
+        .get_object("click")
+        .expect("Couldn't get buttonClick");
 
     window.show_all();
 }
 
 fn main() {
-    let application =
-        gtk::Application::new(Some("com.github.gtk-rs.examples.grid"), Default::default())
-            .expect("Initialization failed...");
+    gtk::init().expect("Unable to start GTK3. Error");
 
-    application.connect_activate(|app| {
-        build_ui(app);
-    });
+    let gui = Arc::new(Gui::new());
 
-    application.run(&args().collect::<Vec<_>>());
+    let state = Arc::new(RefCell::new(State::new()));
+    {
+        let button1 = &gui.button1;
+        let gui = Arc::clone(&gui);
+        let state = Arc::clone(&state);
+        button1.connect_enter_notify_event(move |_, _| {
+            let mut state = state.borrow_mut();
+            state.update(Ok(AppState::CLICK));
+            gui.update_from(&state);
+            Inhibit(false)
+        });
+    }
+    {
+        let button2 = &gui.button2;
+        let gui = Arc::clone(&gui);
+        let state = Arc::clone(&state);
+        button2.connect_enter_notify_event(move |_, _| {
+            let mut state = state.borrow_mut();
+            state.update(Ok(AppState::DROIT));
+            gui.update_from(&state);
+            Inhibit(false)
+        });
+    }
+    gui.start();
+    gtk::main();
 }
