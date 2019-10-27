@@ -1,13 +1,13 @@
 use gtk::prelude::*;
 
-use gtk::{ApplicationWindow, Builder, Button, Grid};
+use gtk::{ApplicationWindow, Builder, Button};
 
 use crate::app_state::{AppState, State};
 
 pub struct Gui {
-    pub window: gtk::ApplicationWindow,
-    pub button1: gtk::Button,
-    pub button2: gtk::Button,
+    pub window: ApplicationWindow,
+    pub button1: Button,
+    pub button2: Button,
 }
 
 impl Gui {
@@ -18,8 +18,8 @@ impl Gui {
 
         // Get handles for the various controls we need to use.
         let window: ApplicationWindow = builder.get_object("window").unwrap();
-        let button1: gtk::Button = builder.get_object("click").unwrap();
-        let button2: gtk::Button = builder.get_object("droit").unwrap();
+        let button1: Button = builder.get_object("click").unwrap();
+        let button2: Button = builder.get_object("droit").unwrap();
 
         Gui {
             window,
