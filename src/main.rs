@@ -19,23 +19,45 @@ fn main() {
 
     let state = Arc::new(RefCell::new(State::new()));
     {
-        let button1 = &gui.button1;
+        let button = &gui.button_click;
         let gui = Arc::clone(&gui);
         let state = Arc::clone(&state);
-        button1.connect_enter_notify_event(move |_, _| {
+        button.connect_enter_notify_event(move |_, _| {
             let mut state = state.borrow_mut();
-            state.update(Ok(AppState::CLICK));
+            state.update(AppState::CLICK);
             gui.update_from(&state);
             Inhibit(false)
         });
     }
     {
-        let button2 = &gui.button2;
+        let button = &gui.button_right;
         let gui = Arc::clone(&gui);
         let state = Arc::clone(&state);
-        button2.connect_enter_notify_event(move |_, _| {
+        button.connect_enter_notify_event(move |_, _| {
             let mut state = state.borrow_mut();
-            state.update(Ok(AppState::DROIT));
+            state.update(AppState::DROIT);
+            gui.update_from(&state);
+            Inhibit(false)
+        });
+    }
+    {
+        let button = &gui.button_long;
+        let gui = Arc::clone(&gui);
+        let state = Arc::clone(&state);
+        button.connect_enter_notify_event(move |_, _| {
+            let mut state = state.borrow_mut();
+            state.update(AppState::LONG);
+            gui.update_from(&state);
+            Inhibit(false)
+        });
+    }
+    {
+        let button = &gui.button_double;
+        let gui = Arc::clone(&gui);
+        let state = Arc::clone(&state);
+        button.connect_enter_notify_event(move |_, _| {
+            let mut state = state.borrow_mut();
+            state.update(AppState::DOUBLE);
             gui.update_from(&state);
             Inhibit(false)
         });

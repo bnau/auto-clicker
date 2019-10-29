@@ -1,5 +1,3 @@
-use std::error::Error;
-
 pub struct State {
     pub value: AppState,
 }
@@ -10,14 +8,8 @@ impl State {
             value: AppState::CLICK,
         };
     }
-    pub fn update(&mut self, r: Result<AppState, Box<Error>>) {
-        match r {
-            //Err(e) => self.error = Some(format!("{}", e)),
-            Ok(v) => {
-                self.value = v;
-            }
-            _ => (),
-        }
+    pub fn update(&mut self, state: AppState) {
+        self.value = state;
     }
 }
 
