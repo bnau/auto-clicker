@@ -12,6 +12,9 @@ use app_state::{AppState, State};
 mod gui;
 use gui::Gui;
 
+mod mouse;
+use mouse::make_mouse_events;
+
 fn main() {
     gtk::init().expect("Unable to start GTK3. Error");
 
@@ -62,6 +65,7 @@ fn main() {
             Inhibit(false)
         });
     }
+    make_mouse_events(state);
     gui.start();
     gtk::main();
 }
