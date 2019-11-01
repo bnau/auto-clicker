@@ -4,6 +4,8 @@ extern crate gtk;
 use gtk::prelude::*;
 
 use std::sync::{Arc, Mutex};
+use std::thread;
+use std::time::Duration;
 
 mod state;
 use state::{AppState, State};
@@ -64,7 +66,15 @@ fn main() {
             Inhibit(false)
         });
     }
-    make_mouse_events(state);
+    {
+        let state = Arc::clone(&state);
+        thread::spawn(move || loop {
+            let wait_time = Duration::from_secs(5);
+            thread::sleep(wait_time);
+            let state = &state.lock().unwrap();
+            make_mouse_events(state);
+        });
+    }
     gui.start();
     gtk::main();
 }
