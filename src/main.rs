@@ -3,8 +3,7 @@ extern crate gtk;
 
 use gtk::prelude::*;
 
-use std::cell::RefCell;
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 
 mod app_state;
 use app_state::{AppState, State};
@@ -20,13 +19,13 @@ fn main() {
 
     let gui = Arc::new(Gui::new());
 
-    let state = Arc::new(RefCell::new(State::new()));
+    let state = Arc::new(Mutex::new(State::new()));
     {
         let button = &gui.button_click;
         let gui = Arc::clone(&gui);
         let state = Arc::clone(&state);
         button.connect_enter_notify_event(move |_, _| {
-            let mut state = state.borrow_mut();
+            let mut state = state.lock().unwrap();
             state.update(AppState::CLICK);
             gui.update_from(&state);
             Inhibit(false)
@@ -37,7 +36,7 @@ fn main() {
         let gui = Arc::clone(&gui);
         let state = Arc::clone(&state);
         button.connect_enter_notify_event(move |_, _| {
-            let mut state = state.borrow_mut();
+            let mut state = state.lock().unwrap();
             state.update(AppState::DROIT);
             gui.update_from(&state);
             Inhibit(false)
@@ -48,7 +47,7 @@ fn main() {
         let gui = Arc::clone(&gui);
         let state = Arc::clone(&state);
         button.connect_enter_notify_event(move |_, _| {
-            let mut state = state.borrow_mut();
+            let mut state = state.lock().unwrap();
             state.update(AppState::LONG);
             gui.update_from(&state);
             Inhibit(false)
@@ -59,7 +58,7 @@ fn main() {
         let gui = Arc::clone(&gui);
         let state = Arc::clone(&state);
         button.connect_enter_notify_event(move |_, _| {
-            let mut state = state.borrow_mut();
+            let mut state = state.lock().unwrap();
             state.update(AppState::DOUBLE);
             gui.update_from(&state);
             Inhibit(false)
