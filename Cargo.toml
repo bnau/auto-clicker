@@ -13,3 +13,6 @@ features = ["v3_22"]
 [dependencies.gio]
 version = ""
 features = ["v2_44"]
+
+[dependencies.enigo]
+version = "0.0.13"
