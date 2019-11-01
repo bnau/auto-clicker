@@ -1,6 +1,8 @@
 extern crate enigo;
-use crate::app_state::{AppState, State};
 use enigo::{Enigo, MouseButton, MouseControllable};
+
+use crate::state::{AppState, State};
+
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Duration;

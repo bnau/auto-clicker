@@ -5,8 +5,8 @@ use gtk::prelude::*;
 
 use std::sync::{Arc, Mutex};
 
-mod app_state;
-use app_state::{AppState, State};
+mod state;
+use state::{AppState, State};
 
 mod gui;
 use gui::Gui;

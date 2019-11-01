@@ -2,7 +2,7 @@ use gtk::prelude::*;
 
 use gtk::{ApplicationWindow, Builder, Button};
 
-use crate::app_state::{AppState, State};
+use crate::state::{AppState, State};
 
 pub struct Gui {
     pub window: ApplicationWindow,
