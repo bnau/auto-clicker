@@ -1,15 +1,18 @@
 use gtk::prelude::*;
 
-use gtk::{ApplicationWindow, Builder, Button};
+use gtk::{ApplicationWindow, Builder};
 
-use crate::state::{AppState, State};
+use crate::state::{MouseAction, State};
+
+mod app_button;
+use app_button::AppButton;
 
 pub struct Gui {
     pub window: ApplicationWindow,
-    pub button_click: Button,
-    pub button_right: Button,
-    pub button_long: Button,
-    pub button_double: Button,
+    pub button_click: AppButton,
+    pub button_right: AppButton,
+    pub button_long: AppButton,
+    pub button_double: AppButton,
 }
 
 impl Gui {
@@ -20,17 +23,15 @@ impl Gui {
 
         // Get handles for the various controls we need to use.
         let window: ApplicationWindow = builder.get_object("window").unwrap();
-        let button_click: Button = builder.get_object("click").unwrap();
-        let button_right: Button = builder.get_object("droit").unwrap();
-        let button_long: Button = builder.get_object("long").unwrap();
-        let button_double: Button = builder.get_object("double").unwrap();
-
         Gui {
             window,
-            button_click,
-            button_right,
-            button_long,
-            button_double,
+            button_click: AppButton::new(builder.get_object("click").unwrap(), MouseAction::CLICK),
+            button_right: AppButton::new(builder.get_object("droit").unwrap(), MouseAction::DROIT),
+            button_long: AppButton::new(builder.get_object("long").unwrap(), MouseAction::LONG),
+            button_double: AppButton::new(
+                builder.get_object("double").unwrap(),
+                MouseAction::DOUBLE,
+            ),
         }
     }
 
@@ -43,28 +44,10 @@ impl Gui {
         self.window.show_all();
     }
 
-    pub fn update_from(&self, state: &State) {
-        self.set_default_button_labels();
-        match state.value {
-            AppState::CLICK => {
-                self.button_click.set_label("Active");
-            }
-            AppState::DROIT => {
-                self.button_right.set_label("Active");
-            }
-            AppState::LONG => {
-                self.button_long.set_label("Active");
-            }
-            AppState::DOUBLE => {
-                self.button_double.set_label("Active");
-            }
-        }
-    }
-
-    fn set_default_button_labels(&self) {
-        self.button_click.set_label("Click");
-        self.button_right.set_label("Droit");
-        self.button_long.set_label("Long");
-        self.button_double.set_label("Double");
+    pub fn update(&self, state: &State) {
+        self.button_click.update(state);
+        self.button_right.update(state);
+        self.button_long.update(state);
+        self.button_double.update(state);
     }
 }

@@ -1,13 +1,13 @@
 extern crate enigo;
 use enigo::{Enigo, MouseButton, MouseControllable};
 
-use crate::state::{AppState, State};
+use crate::state::{MouseAction, State};
 
 pub fn make_mouse_events(state: &State) {
     let mut enigo = Enigo::new();
 
     let button_type = match state.value {
-        AppState::DROIT => MouseButton::Right,
+        MouseAction::DROIT => MouseButton::Right,
         _ => MouseButton::Left,
     };
 

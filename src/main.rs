@@ -8,7 +8,7 @@ use std::thread;
 use std::time::Duration;
 
 mod state;
-use state::{AppState, State};
+use state::{MouseAction, State};
 
 mod gui;
 use gui::Gui;
@@ -23,46 +23,46 @@ fn main() {
 
     let state = Arc::new(Mutex::new(State::new()));
     {
-        let button = &gui.button_click;
+        let button = &gui.button_click.button;
         let gui = Arc::clone(&gui);
         let state = Arc::clone(&state);
         button.connect_enter_notify_event(move |_, _| {
             let mut state = state.lock().unwrap();
-            state.update(AppState::CLICK);
-            gui.update_from(&state);
+            state.update(MouseAction::CLICK);
+            gui.update(&state);
             Inhibit(false)
         });
     }
     {
-        let button = &gui.button_right;
+        let button = &gui.button_right.button;
         let gui = Arc::clone(&gui);
         let state = Arc::clone(&state);
         button.connect_enter_notify_event(move |_, _| {
             let mut state = state.lock().unwrap();
-            state.update(AppState::DROIT);
-            gui.update_from(&state);
+            state.update(MouseAction::DROIT);
+            gui.update(&state);
             Inhibit(false)
         });
     }
     {
-        let button = &gui.button_long;
+        let button = &gui.button_long.button;
         let gui = Arc::clone(&gui);
         let state = Arc::clone(&state);
         button.connect_enter_notify_event(move |_, _| {
             let mut state = state.lock().unwrap();
-            state.update(AppState::LONG);
-            gui.update_from(&state);
+            state.update(MouseAction::LONG);
+            gui.update(&state);
             Inhibit(false)
         });
     }
     {
-        let button = &gui.button_double;
+        let button = &gui.button_double.button;
         let gui = Arc::clone(&gui);
         let state = Arc::clone(&state);
         button.connect_enter_notify_event(move |_, _| {
             let mut state = state.lock().unwrap();
-            state.update(AppState::DOUBLE);
-            gui.update_from(&state);
+            state.update(MouseAction::DOUBLE);
+            gui.update(&state);
             Inhibit(false)
         });
     }
@@ -78,3 +78,5 @@ fn main() {
     gui.start();
     gtk::main();
 }
+
+fn update_state(state: State, gui: Gui) {}
