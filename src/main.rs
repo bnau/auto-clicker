@@ -57,9 +57,9 @@ fn main() {
     }
     {
         let button = &gui.button_double.button;
+        let gui = Arc::clone(&gui);
+        let state = Arc::clone(&state);
         button.connect_enter_notify_event(move |_, _| {
-            let gui = Arc::clone(&gui);
-            let state = Arc::clone(&state);
             let mut state = state.lock().unwrap();
             state.update(MouseAction::DOUBLE);
             gui.update(&state);
@@ -78,5 +78,3 @@ fn main() {
     gui.start();
     gtk::main();
 }
-
-fn update_state(state: State, gui: Gui) {}
