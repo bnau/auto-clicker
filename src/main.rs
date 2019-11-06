@@ -27,10 +27,7 @@ fn main() {
         let gui = Arc::clone(&gui);
         let state = Arc::clone(&state);
         button.connect_enter_notify_event(move |_, _| {
-            let mut state = state.lock().unwrap();
-            state.update(MouseAction::CLICK);
-            gui.update(&state);
-            Inhibit(false)
+            button_action(&gui, &state, MouseAction::CLICK)
         });
     }
     {
@@ -38,32 +35,22 @@ fn main() {
         let gui = Arc::clone(&gui);
         let state = Arc::clone(&state);
         button.connect_enter_notify_event(move |_, _| {
-            let mut state = state.lock().unwrap();
-            state.update(MouseAction::DROIT);
-            gui.update(&state);
-            Inhibit(false)
+            button_action(&gui, &state, MouseAction::DROIT)
         });
     }
     {
         let button = &gui.button_long.button;
         let gui = Arc::clone(&gui);
         let state = Arc::clone(&state);
-        button.connect_enter_notify_event(move |_, _| {
-            let mut state = state.lock().unwrap();
-            state.update(MouseAction::LONG);
-            gui.update(&state);
-            Inhibit(false)
-        });
+        button
+            .connect_enter_notify_event(move |_, _| button_action(&gui, &state, MouseAction::LONG));
     }
     {
         let button = &gui.button_double.button;
         let gui = Arc::clone(&gui);
         let state = Arc::clone(&state);
         button.connect_enter_notify_event(move |_, _| {
-            let mut state = state.lock().unwrap();
-            state.update(MouseAction::DOUBLE);
-            gui.update(&state);
-            Inhibit(false)
+            button_action(&gui, &state, MouseAction::DOUBLE)
         });
     }
     {
@@ -77,4 +64,11 @@ fn main() {
     }
     gui.start();
     gtk::main();
+}
+
+fn button_action(gui: &Arc<Gui>, state: &Arc<Mutex<State>>, action: MouseAction) -> Inhibit {
+    let mut state = state.lock().unwrap();
+    state.update(action);
+    gui.update(&state);
+    Inhibit(false)
 }
