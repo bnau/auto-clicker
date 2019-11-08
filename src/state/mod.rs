@@ -1,19 +1,20 @@
 pub struct State {
-    pub value: AppState,
+    pub value: MouseAction,
 }
 
 impl State {
     pub fn new() -> Self {
         return Self {
-            value: AppState::CLICK,
+            value: MouseAction::CLICK,
         };
     }
-    pub fn update(&mut self, state: AppState) {
+    pub fn update(&mut self, state: MouseAction) {
         self.value = state;
     }
 }
 
-pub enum AppState {
+#[derive(PartialEq)]
+pub enum MouseAction {
     CLICK,
     DROIT,
     LONG,
