@@ -3,9 +3,7 @@ extern crate gtk;
 
 use gtk::prelude::*;
 
-use std::sync::{Arc, Mutex};
-use std::thread;
-use std::time::Duration;
+use std::sync::Arc;
 
 mod state;
 use state::{MouseAction, State};
@@ -21,53 +19,45 @@ fn main() {
 
     let gui = Arc::new(Gui::new());
 
-    let state = Arc::new(Mutex::new(State::new()));
+    static mut STATE: State = State::new();
     {
         let button = &gui.button_click.button;
         let gui = Arc::clone(&gui);
-        let state = Arc::clone(&state);
-        button.connect_enter_notify_event(move |_, _| {
-            button_action(&gui, &state, MouseAction::CLICK)
+        button.connect_enter_notify_event(move |_, _| unsafe {
+            button_action(&gui, &mut STATE, MouseAction::CLICK)
         });
     }
     {
         let button = &gui.button_right.button;
         let gui = Arc::clone(&gui);
-        let state = Arc::clone(&state);
-        button.connect_enter_notify_event(move |_, _| {
-            button_action(&gui, &state, MouseAction::DROIT)
+        button.connect_enter_notify_event(move |_, _| unsafe {
+            button_action(&gui, &mut STATE, MouseAction::DROIT)
         });
     }
     {
         let button = &gui.button_long.button;
         let gui = Arc::clone(&gui);
-        let state = Arc::clone(&state);
-        button
-            .connect_enter_notify_event(move |_, _| button_action(&gui, &state, MouseAction::LONG));
+        button.connect_enter_notify_event(move |_, _| unsafe {
+            button_action(&gui, &mut STATE, MouseAction::LONG)
+        });
     }
     {
         let button = &gui.button_double.button;
         let gui = Arc::clone(&gui);
-        let state = Arc::clone(&state);
-        button.connect_enter_notify_event(move |_, _| {
-            button_action(&gui, &state, MouseAction::DOUBLE)
+        button.connect_enter_notify_event(move |_, _| unsafe {
+            button_action(&gui, &mut STATE, MouseAction::DOUBLE)
         });
     }
     {
-        let state = Arc::clone(&state);
-        thread::spawn(move || loop {
-            let wait_time = Duration::from_secs(5);
-            thread::sleep(wait_time);
-            let state = &state.lock().unwrap();
-            make_mouse_events(state);
-        });
+        unsafe {
+            make_mouse_events(&STATE);
+        }
     }
     gui.start();
     gtk::main();
 }
 
-fn button_action(gui: &Arc<Gui>, state: &Arc<Mutex<State>>, action: MouseAction) -> Inhibit {
-    let mut state = state.lock().unwrap();
+fn button_action(gui: &Arc<Gui>, state: &mut State, action: MouseAction) -> Inhibit {
     state.update(action);
     gui.update(&state);
     Inhibit(false)

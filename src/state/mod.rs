@@ -3,7 +3,7 @@ pub struct State {
 }
 
 impl State {
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         return Self {
             value: MouseAction::CLICK,
         };

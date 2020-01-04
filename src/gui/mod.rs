@@ -37,6 +37,8 @@ impl Gui {
 
     pub fn start(&self) {
         self.window.set_role("Auto Clicker");
+        self.window.set_keep_above(true);
+        self.window.set_accept_focus(false);
         self.window.connect_delete_event(|_, _| {
             gtk::main_quit();
             Inhibit(false)
