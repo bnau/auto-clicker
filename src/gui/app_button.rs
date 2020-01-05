@@ -21,9 +21,9 @@ impl AppButton {
     }
 
     pub fn update(&self, state: &State) {
-        match state.value == self.action {
-            true => self.button.set_label("Actif"),
-            false => self.button.set_label(self.label.as_str()),
+        match state.value {
+            x if Some(self.action) == x => self.button.set_label("Actif"),
+            _ => self.button.set_label(self.label.as_str()),
         }
     }
 }

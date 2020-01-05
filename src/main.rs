@@ -50,7 +50,7 @@ fn main() {
     }
     {
         unsafe {
-            make_mouse_events(&STATE);
+            make_mouse_events(&mut STATE);
         }
     }
     gui.start();
@@ -58,7 +58,11 @@ fn main() {
 }
 
 fn button_action(gui: &Arc<Gui>, state: &mut State, action: MouseAction) -> Inhibit {
-    state.update(action);
+    if state.value == Some(action) {
+        state.update_value(None);
+    } else {
+        state.update_value(Some(action));
+    }
     gui.update(&state);
     Inhibit(false)
 }
