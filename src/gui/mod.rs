@@ -1,6 +1,6 @@
 use gtk::prelude::*;
 
-use gtk::{ApplicationWindow, Builder};
+use gtk::{ApplicationWindow, Builder, CssProvider, StyleContext};
 
 use crate::state::{MouseAction, State};
 
@@ -14,14 +14,11 @@ pub struct Gui {
     pub button_long: AppButton,
     pub button_double: AppButton,
 }
-
+const CSS: &str = include_str!("gui.css");
 impl Gui {
     pub fn new() -> Self {
-        // Initialize the UI from the Glade XML.
         let glade_src = include_str!("gui.xml");
         let builder = Builder::new_from_string(glade_src);
-
-        // Get handles for the various controls we need to use.
         let window: ApplicationWindow = builder.get_object("window").unwrap();
         Gui {
             window,
@@ -36,6 +33,10 @@ impl Gui {
     }
 
     pub fn start(&self) {
+        let screen = self.window.get_screen().unwrap();
+        let style = CssProvider::new();
+        let _ = CssProviderExt::load_from_data(&style, CSS.as_bytes());
+        StyleContext::add_provider_for_screen(&screen, &style, gtk::STYLE_PROVIDER_PRIORITY_USER);
         self.window.set_role("Auto Clicker");
         self.window.set_keep_above(true);
         self.window.set_accept_focus(false);
