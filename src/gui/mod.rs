@@ -14,7 +14,7 @@ pub struct Gui {
     pub button_long: AppButton,
     pub button_double: AppButton,
 }
-const CSS: &str = include_str!("gui.css");
+
 impl Gui {
     pub fn new() -> Self {
         let glade_src = include_str!("gui.xml");
@@ -35,7 +35,7 @@ impl Gui {
     pub fn start(&self) {
         let screen = self.window.get_screen().unwrap();
         let style = CssProvider::new();
-        let _ = CssProviderExt::load_from_data(&style, CSS.as_bytes());
+        let _ = CssProviderExt::load_from_data(&style, include_str!("gui.css").as_bytes());
         StyleContext::add_provider_for_screen(&screen, &style, gtk::STYLE_PROVIDER_PRIORITY_USER);
         self.window.set_role("Auto Clicker");
         self.window.set_keep_above(true);
